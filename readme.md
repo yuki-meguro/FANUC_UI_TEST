@@ -20,7 +20,8 @@ FANUC KAREL 機能の 1 つである Form Editor を用いたサンプルプロ�
 - dic1kanj.tx
 - dic1kn.vr
 - fanuc_ui_test.pc
-  3 ファイルをロボットへ USB などで読み込む
+
+3 ファイルをロボットへ USB などで読み込む
 
 ## 実行方法
 
