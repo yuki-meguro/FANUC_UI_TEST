@@ -1,0 +1,24 @@
+* Coding Shift-jis
+.kl dic_form
+.form
+$-,form1
+&home &reverse 'DOクリア' &standard &new_line
+*'設定' &new_line
+@3,2 '指定した開始点から終了点までの'&new_line
+@4,2 'DOを操作します'&new_line
+@6,5 '開始点' @6,23 "-%10d(1,2048)" &new_line 
+@7,5 '終了点' @7,23 "-%10d(1,2048)" &new_line
+@8,5 '設定値' @8,29"-%4B(bool_menu)" &new_line
+&new_line&bg_blue&fg_cyan' F3キーで実行します '&new_line
+' F1キーで終了します '&fg_dflt &bg_dflt &new_line
+^form1_fkey * specifies element which contains
+.endform
+$-,form1_fkey * function key labels
+'[ 終了 ]' &new_line
+"" &new_line
+'[ 実行 ]' &new_line
+"" &new_line
+"" &new_line
+$2,bool_menu
+&bg_red&fg_black' ｵﾌ ' &bg_dflt&fg_dflt&new_line
+&bg_green&fg_black' ｵﾝ '&bg_dflt&fg_dflt

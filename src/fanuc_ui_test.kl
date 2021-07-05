@@ -1,0 +1,95 @@
+--* coding: Shift-jis *--
+--
+--  --------------------------------------
+--  Released under the Apache 2.0 License.
+--  Yuki Meguro
+--  --------------------------------------
+--
+--  --------------------------------------
+--  Author: Yuki Meguro
+--
+--  Description:
+--
+--
+--  Dependancies: none
+--  --------------------------------------
+
+PROGRAM FANUC_UI_TEST
+%NOLOCKGROUP
+%NOPAUSESHFT
+%NOBUSYLAMP
+%INCLUDE klevkmsk
+%INCLUDE klevkeys
+%INCLUDE dic_form
+VAR
+    status: INTEGER
+    i: INTEGER
+    --** FORM VARS **--
+    l_status:INTEGER
+    device_stat: INTEGER
+    value_array: ARRAY[3] OF STRING[30]
+    value_int: ARRAY[2] OF INTEGER
+    change_array:ARRAY[1] OF BOOLEAN
+    inact_array:ARRAY[1] OF BOOLEAN
+    def_item :INTEGER
+    term_mask:INTEGER
+    term_char:INTEGER
+    exit_menu:BOOLEAN
+    on_flg: BOOLEAN
+
+    ROUTINE DataChk(val_1: INTEGER; val_2: INTEGER): INTEGER
+    BEGIN
+        IF val_1<=val_2 THEN
+            RETURN(0)
+        ELSE
+            RETURN(1)
+        ENDIF
+    END DataChk
+
+    ROUTINE DoutSet(port_no: INTEGER; bit: INTEGER)
+    BEGIN
+        SET_PORT_VAL(2, port_no, bit, status)
+    END DoutSet
+
+BEGIN
+    value_int[1] = 1
+    value_int[2] = 1
+    on_flg = FALSE
+    value_array[1] = 'value_int[1]'
+    value_array[2] = 'value_int[2]'
+    value_array[3] = 'on_flg'
+    def_item = 1
+    term_mask = kc_func_key
+
+    FORCE_SPMENU(device_stat, SPI_TPUSER2, 1)
+    exit_menu = FALSE
+    REPEAT
+        DISCTRL_FORM('dic1', form1, value_array, inact_array, change_array,term_mask, def_item, term_char, l_status)
+        IF l_status=0 THEN
+            SELECT term_char OF
+                CASE(ky_f1):    -- [ 終了 ]
+                    exit_menu = TRUE
+                CASE(ky_f3):    -- [ 実行 ]
+                    IF DataChk(value_int[1], value_int[2])=0 THEN
+                        FOR i = value_int[1] TO value_int[2] DO
+                            IF on_flg= TRUE THEN
+                                Doutset(i, 1)
+                            ELSE
+                                DoutSet(i, 0)
+                            ENDIF
+                        ENDFOR
+                    ELSE
+                        WRITE TPERROR(CHR(137),CHR(128))
+                        WRITE TPERROR('Input error', CR)
+                    ENDIF
+                ELSE:
+                    -- pass                
+            ENDSELECT
+        ELSE
+            ABORT
+            -- 他メニューに飛んだ場合、実行中断
+        ENDIF
+        DELAY 20
+    UNTIL exit_menu
+    FORCE_SPMENU(TP_PANEL, SPI_TPSELECT, 1)
+END FANUC_UI_TEST
